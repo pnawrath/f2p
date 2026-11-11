@@ -51,6 +51,7 @@ MONTHS = {m: i for i, m in enumerate(
 
 BOLD = Font(bold=True)
 TITLE = Font(bold=True, size=14)
+GATE_FONT = Font(italic=True, size=9, color="6B7785")
 HEAD_FILL = PatternFill("solid", fgColor="E7EEF7")
 THIN = Side(style="thin", color="B7C3D0")
 BOX = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
@@ -567,7 +568,7 @@ def short_names(stats):
         elif stat.startswith("MFI"):
             label = header = f"{gate} {stat.replace('Comp-', '')}"
         elif "%" in stat or not stat:
-            label, header = gate, (f"{gate} (%)" if stat else gate)
+            label = header = f"{gate} (%)" if stat else gate
         else:
             label = header = f"{gate} {stat}"
         out[s] = (label, header)
@@ -645,7 +646,7 @@ def write_workbook(title, plates, all_stats, out_dir, meta=None):
     ws.title = "Plates"
     ws["A1"], ws["A1"].font = title, TITLE
     grid_w = n_cols + 1                       # label column + well columns
-    band_h = n_rows + 3                       # plate name + header + rows + gap
+    band_h = n_rows + 4                       # plate name + header + rows + gate line + gap
     for p, (plate, data) in enumerate(plates):
         top = 3 + p * band_h
         if plate:
@@ -670,6 +671,9 @@ def write_workbook(title, plates, all_stats, out_dir, meta=None):
             rng = (f"{get_column_letter(left + 1)}{hdr + 1}:"
                    f"{get_column_letter(left + n_cols)}{hdr + n_rows}")
             colour_range(ws, rng, f"{get_column_letter(left + 1)}{hdr + 1}", is_live_freq(stat))
+            # full gating path under the grid (below the "H" row label)
+            path = " / ".join(x.strip() for x in stat.partition("|")[0].strip().strip("/").split("/"))
+            ws.cell(hdr + n_rows + 1, left, f"Gate: {path}").font = GATE_FONT
     for s_i, stat in enumerate(all_stats):
         left = 3 + s_i * (grid_w + 1)
         ws.column_dimensions[get_column_letter(left)].width = max(8, min(22, len(names[stat][0]) + 2))
