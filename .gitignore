@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Personal settings and generated output
+settings.ini
+*.xlsx
+*.wsp
+*.fcs
+*.csv
+
+# Old versions and unused files
+archive/
+icon.icns
