@@ -13,7 +13,7 @@ Turns a FlowJo workspace (.wsp) into an Excel file:
 
 ## Use
 Right-click a `.wsp` file (or the folder containing it) in Finder → **Quick Actions → f2p**.
-Tick the variables, groups and gates you want → **Make Excel**. The file appears next to
+Tick the variables, groups and gates you want → **Make Excel**. The file, named after the experiment, appears next to
 the .wsp. In Terminal: `f2p path/to/file.wsp`.
 
 ## Settings

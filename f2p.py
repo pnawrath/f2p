@@ -9,7 +9,8 @@ plate; Freq. of Parent / #cells come from the gate counts, MFI from Median/Mean
 statistics saved in the workspace. A dialog lets you tick variables, groups and
 gates (gates matching live / CD107a / 107a / IFN / TNF and all groups by default).
 
-Output next to the .wsp, <wsp name with yyyymmdd dates>_f2p.xlsx, with
+Output next to the .wsp, <experiment name>.xlsx (EXPERIMENT NAME keyword;
+falls back to <wsp name with yyyymmdd dates>_f2p.xlsx), with
   - "Plates": one well grid per gate, gates side by side, plates stacked down
   - "List":   wells down, one column per plate, grouped by gate
   - "Info":   acquisition, instrument and panel metadata
@@ -631,9 +632,10 @@ def write_info(wb, meta):
 
 
 def write_workbook(title, plates, all_stats, out_dir, meta=None):
-    file_title = title
+    file_title = f"{title}_f2p"            # fallback: .wsp name
     if meta and meta.get("experiment"):
         title = meta["experiment"]
+        file_title = meta["experiment"].replace("; ", " + ")   # name the file after the experiment
     wells = {w for _, d in plates for vals in d.values() for w in vals}
     big = any(row_index(r) > 7 or c > 12 for r, c in wells)
     n_rows, n_cols = (16, 24) if big else (8, 12)
@@ -715,7 +717,7 @@ def write_workbook(title, plates, all_stats, out_dir, meta=None):
     if meta:
         write_info(wb, meta)
     safe = re.sub(r'[\\/:*?"<>|]+', "-", file_title).strip()
-    out = out_dir / f"{safe}_f2p.xlsx"
+    out = out_dir / f"{safe}.xlsx"
     wb.save(out)
     return out
 
